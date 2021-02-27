@@ -8,15 +8,15 @@ using UnityEngine.EventSystems;
 
 
 
-public class sustainerController : MonoBehaviour
+public class sustainerController : Photon.Pun.MonoBehaviourPun
 {
     //joystick
     [SerializeField] VariableJoystick m_VariableJoystick;
     [SerializeField] Animator m_Animator;
-    [SerializeField] float m_Speed = 0.2f;
+    [SerializeField] float m_Speed = 1;
     private CharacterController m_Controller;
     private Vector3 m_Direction;
-
+    private Camera m_Camera;
 
     // 地面の位置
     //private float groundLevel = 0.5f;
@@ -27,12 +27,16 @@ public class sustainerController : MonoBehaviour
     public PhotonTransformView myPTV;
 
 
+
     // Use this for initialization
     void Start()
     {
         if (myPV.IsMine)    //自キャラであれば実行
         {
-            m_Controller = GetComponent<CharacterController>();
+            //インスタンスにjoystickを登録
+            m_VariableJoystick = GameObject.Find("Variable Joystick").GetComponent<VariableJoystick> ();
+            //m_Camera = GameObject.Find("Camera Work"),GetComponent<CameraWork>();
+            m_Controller = this.gameObject.GetComponent<CharacterController>();
 
             /*
             //RunボタンのPointerDownにGetMyRunButtonDownを登録
@@ -47,7 +51,7 @@ public class sustainerController : MonoBehaviour
             entry2.callback.AddListener(data => GetMyRunButtonUp());
             Run_trigger.triggers.Add(entry2);
             */
-     
+
 
         }
 
@@ -72,12 +76,13 @@ public class sustainerController : MonoBehaviour
         }
         m_Animator.SetFloat("Speed", Mathf.Max(Mathf.Abs(m_Direction.x), Mathf.Abs(m_Direction.z)));
         m_Controller.Move(m_Direction * m_Speed * Time.deltaTime);
-
+        //Debug.Log(m_Direction);
 
     }
 
     public void FixedUpdate()
     {
+
         m_Direction = Vector3.forward * m_VariableJoystick.Vertical + Vector3.right * m_VariableJoystick.Horizontal;
     }
 
