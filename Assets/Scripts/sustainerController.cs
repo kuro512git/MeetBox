@@ -16,6 +16,7 @@ public class sustainerController : Photon.Pun.MonoBehaviourPun
     [SerializeField] float m_Speed = 1;
     private CharacterController m_Controller;
     private Vector3 m_Direction;
+    private Vector3 y_Direction;
     private Camera m_Camera;
 
     // 地面の位置
@@ -35,7 +36,7 @@ public class sustainerController : Photon.Pun.MonoBehaviourPun
         {
             //インスタンスにjoystickを登録
             m_VariableJoystick = GameObject.Find("Variable Joystick").GetComponent<VariableJoystick> ();
-            //m_Camera = GameObject.Find("Camera Work"),GetComponent<CameraWork>();
+            m_Camera = GameObject.Find("Main Camera").GetComponent<Camera>();
             m_Controller = this.gameObject.GetComponent<CharacterController>();
 
             /*
@@ -75,15 +76,38 @@ public class sustainerController : Photon.Pun.MonoBehaviourPun
             transform.localRotation = Quaternion.LookRotation(m_Direction);
         }
         m_Animator.SetFloat("Speed", Mathf.Max(Mathf.Abs(m_Direction.x), Mathf.Abs(m_Direction.z)));
+
+        var charaTransformRotate = m_Controller.transform.localRotation.eulerAngles;
+        var q = Quaternion.Euler(0.0f, charaTransformRotate.y, 0.0f);
+        Vector3 y_Direction = q.eulerAngles;
+
+        //m_Controller.Move(m_Direction * m_Speed * Time.deltaTime);
         m_Controller.Move(m_Direction * m_Speed * Time.deltaTime);
+
+        //if (m_Camera.transform.localRotation.eulerAngles)
+        var angle = m_Camera.transform.localRotation.eulerAngles;
+
+
+
+        var x = new Vector3(-1, 0, 0);
+        Debug.Log(charaTransformRotate.y);
+
+
+        if (Quaternion.Euler(x) == Quaternion.Euler(angle))
+        {
+            
+        }
+        //var v_angle = new Vector3(angle.x, angle.y, angle.z);
+       // m_Controller.Move(v_angle * m_Speed * Time.deltaTime);
+
         //Debug.Log(m_Direction);
 
     }
 
     public void FixedUpdate()
     {
-
         m_Direction = Vector3.forward * m_VariableJoystick.Vertical + Vector3.right * m_VariableJoystick.Horizontal;
+
     }
 
 
